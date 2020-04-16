@@ -1,11 +1,14 @@
 const CONFIG = require('./config');
 const Submarine = require('./entities/Submaine');
 
+
 class Game {
     constructor({ callbacks = {} }) {
         const { COMMANDS, TIMEUPDATE, SCENEUPDATE } = CONFIG;
+        this.mediator = new Mediator(CONFIG2);
         this.COMMANDS = COMMANDS;
         this.TIMEUPDATE = TIMEUPDATE;
+        this.currentId = 0; // submarine id
         this.submarines = {}; // ключ - идентификатор командира
         this.map;
         this.ships = {};
@@ -24,29 +27,43 @@ class Game {
 
     // добавить новую субмарину
     addSubmarine(options) {
-        //...
+        const {name, size, compartments, transitions, team} = options;
+        let submarine = new Submarine(name, size);
+        submarine.compartments = compartments;
+        submarine.transitions = transitions;
+        submarine.team = team;
+        this.submarines[this.currentId] = submarine;
+        this.currentId++; // увеличиваем id 
         this.refreshScene();
     }
 
     // удалить субмарину (она или померла, или капитан включил истеричку и вышел)
     delSubmarine(id) {
-        //...
+        delete this.submarines[id];
         this.refreshScene();
     }
 
     // удалить морячка из субмарины
     delSailor(subId, SailorId) {
-        //...
+        delete this.submarines[subId].team[SailorId];
     }
 
     // среди субмарин найти игрока по id пользователя
     getGamer(user) {
-        //...
+        for( let submarine in this.submarines) {
+            for (let id in this.sybmarine.team) {
+                if(this.submarines[submarine].team[id] == user.id){
+                    return user;
+                }
+            }
+            
+        }
+        return false;
     }
 
     // взять субмарину игрока
     getSubmarine(gamer) {
-
+        return gamer.submarine;   
     }
 
     move(submarine, gamer, direction) {
